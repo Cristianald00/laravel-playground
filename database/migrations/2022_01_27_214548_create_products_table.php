@@ -14,12 +14,12 @@ class CreateProductsTable extends Migration
     public function up()
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->string('name');
             $table->integer('identifier');
-            $table->integer('batch_number')->unsigned();
-            $table->unsignedBigInteger('batch_number');
-            $table->foreign('batch_number')->references('batch_number')->on('inventories')
+            $table->integer('batch_number');
+            $table->unsignedBigInteger('inventory_id');
+            $table->foreign('inventory_id')->references('id')->on('inventories')
                 ->onDelete('cascade')->onUpdate('cascade');
             $table->integer('quantity')->default(0);;
             $table->decimal('price');

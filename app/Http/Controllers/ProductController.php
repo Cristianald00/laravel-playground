@@ -3,22 +3,42 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductFormRequest;
-use App\Models\Category;
+use App\Models\Inventory;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class ProductController extends Controller
 {
     /**
+     * @var Inventory
+     */
+    private $inventory;
+
+    /**
+     * @var Product
+     */
+    private $product;
+
+    /**
+     * ProductController constructor.
+     * @param Inventory $inventory
+     * @param Product $product
+     */
+    public function __construct(Inventory $inventory, Product $product) {
+        $this->inventory = $inventory;
+        $this->product = $product;
+    }
+
+    /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-
     public function index() {
-        // $products = $this->product->getProducts(true);
-        // return view('products.index', compact('products'));
-        return Product::all();
+        $products = $this->product->getProducts(true);
+        return $products;
+        // return Product::all();
     }
 
     /**

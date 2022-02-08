@@ -11,6 +11,7 @@ class Product extends Model
         'name',
         'identifier',
         'batch_number',
+        'inventory_id',
         'quantity',
         'price',
         'cost',
@@ -23,8 +24,8 @@ class Product extends Model
         'created_at',
         'updated_at'];
 
-    public function category(){
-        return $this->belongsTo(Category::class);
+    public function inventory(){
+        return $this->belongsTo(Inventory::class);
     }
 
     public function product_image(){
@@ -38,13 +39,19 @@ class Product extends Model
     public function shipment(){
         return $this->hasMany(Shipment::class);
     }
+    public function getProducts() {
+        return $this->with('inventory')
+            ->get()->map(function ($product){
+                return $product->format();
+            });
+    }
     public function format()
     {
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'identifier' => $this->identifier,
             'batch_number' => $this->batch_number,
+            'inventory_id' => $this->inventory_id,
             'quantity' => $this->quantity,
             'price' => $this->price,
             'cost' => $this->cost,

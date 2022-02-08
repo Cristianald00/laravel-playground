@@ -12,8 +12,6 @@ class Inventory extends Model
         'quantity'
     ];
 
-    // ===================== ORM Definition START ===================== //
-
     public function parent() {
         return $this->belongsTo(Inventory::class, 'parent_id');
     }
@@ -24,6 +22,25 @@ class Inventory extends Model
 
     public function products() {
         return $this->hasMany(Product::class);
+    }
+
+    public function getInventories($exceptId = null) {
+        return $this->newQuery()
+            ->when($exceptId, function ($query) use ($exceptId){
+                $query->where('id', '!=', $exceptId)->where(function ($q) use ($exceptId){
+                    $q->where('parent_id', '!=', $exceptId)->orWhere('parent_id', null);
+                });
+            })
+            ->when(is_null($exceptId), function ($query){
+                $query->with([
+                    'parent' => function ($parentQ) {
+                        $parentQ->withTrashed();
+                    }
+                ]);
+            })
+            ->get()->map(function ($inventory){
+                return $inventory->format();
+            });
     }
 
     public function format(){
